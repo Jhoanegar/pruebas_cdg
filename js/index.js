@@ -7,7 +7,7 @@
 
 var WRAP = "wrap";
 var BOUNCE = "bounce";
- function initialize() {
+ // function initialize() {
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 	var mouseX=-1000000,mouseY=-100000;
@@ -73,6 +73,7 @@ var BOUNCE = "bounce";
 		raf( animate );
 		update();
 		render();
+		TWEEN.update();
 	}
 
 	var dummy = new THREE.Vector3();
@@ -136,31 +137,64 @@ var BOUNCE = "bounce";
 
 	}
 
+	var circles = [];
 	function onBottleFormed() {
-		myFrame = frame
+		// myFrame = frame
 		console.log("BottleFormed")
 		// console.log(frame.children[0].position);
 		// console.log(pointsShapeBottle[0].position);
 		window.removeEventListener( 'mousemove', onDocumentMouseMove, false );
 
 		var material = new THREE.MeshBasicMaterial({
-			color: 0x0000ff
+			color: 0x000
 		});
 
 		
-		
-		var radius = Math.min(height/2 - 20, width/2 - 20);
-		var segments = 256;
 
-		var circleGeometry = new THREE.CircleGeometry( radius, segments, 0, Math.PI );				
+		var radius = Math.min(height/2 - 20, width/2 - 20);
+		var segments = 128;
+		var startRadius = 0;
+		var endRadius = Math.PI * 2;
+
+		var circleGeometry = new THREE.CircleGeometry(radius, segments, startRadius, endRadius);				
 		var circle = new THREE.Mesh( circleGeometry, material );
+		// circle.position.z = 0;
 		sceneOrtho.add( circle );
+		
+		// children
+		var material = new THREE.MeshBasicMaterial({
+			color: 0xffffff
+		});
+
+		var circleGeometry = new THREE.CircleGeometry(radius - 20, segments, startRadius, endRadius);
+		var childCircle = new THREE.Mesh(circleGeometry, material );
+		// childCircle.position.x = 3;
+		circle.add(childCircle);
+
+		circles.push(circle);
+		circles.push(childCircle);
+
+		// new TWEEN.Tween({radius: startRadius})
+		// 	.to({radius: endRadius})
+		// 	.easing(THREE.Easing.Linear.NONE)
+		// 	.onUpdate(function() {
+		// 		var circle;
+		// 		for (var i = 0; i < circles.length; i++) {
+		// 			circle = circles[i];
+		// 			sceneOrtho.remove(circle);
+		// 		};
+		// 		circles = [];
+				
+		// 	})
+		// 	.start();
+
 	}
 
 	document.body.appendChild( renderer.domElement )
 	animate();
-}
+// }
 
-initialize();
+// initialize();
 
-var myFrame;
+// // var myFrame;
+// var bottleFormed = false;
