@@ -13,14 +13,10 @@ function formBottle() {
 }
 
 function createCircle(params) {
-	radius = params.radius;
-	segments = params.segments || 128;
-	startRadius = params.startRadius || 0;
-	endRadius = params.endRadius || Math.PI * 2;
-	color = params.color || 0x000000;
 	var material = new THREE.MeshBasicMaterial({
-		color: color
+		color: params.color,
+		antialiasing: true
 	});
-	var circleGeometry = new THREE.CircleGeometry(radius, segments, startRadius, endRadius);				
+	var circleGeometry = new THREE.CircleGeometry(params.radius, params.segments, params.startRadius, params.endRadius);				
 	return new THREE.Mesh( circleGeometry, material );
 }

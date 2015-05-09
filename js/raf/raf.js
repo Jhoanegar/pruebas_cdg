@@ -37,6 +37,7 @@ var functions = function() {
               try{
                 cp[i].callback(last)
               } catch(e) {
+                console.log(e);
                 setTimeout(function() { throw e }, 0)
               }
             }
@@ -72,6 +73,7 @@ var functions = function() {
         try{
           fn.apply(this, arguments)
         } catch(e) {
+          console.log(e);
           setTimeout(function() { throw e }, 0)
         }
       })

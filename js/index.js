@@ -17,7 +17,7 @@ var BOUNCE = "bounce";
 	document.body.style.overflow = "hidden"
 	var sceneOrtho = new THREE.Scene();
 	var renderer = new THREE.WebGLRenderer( {
-		antialias: false
+		antialias: true
 	} )
 	renderer.sortObjects = false;
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -70,10 +70,10 @@ var BOUNCE = "bounce";
 	onWindowResize();
 
 	function animate() {
+		TWEEN.update();
 		raf( animate );
 		update();
 		render();
-		TWEEN.update();
 	}
 
 	var dummy = new THREE.Vector3();
@@ -150,43 +150,49 @@ var BOUNCE = "bounce";
 		});
 
 		
+		var params = {
+			radius: Math.min(height/2 - 20, width/2 - 20),
+			segments: 128,
+			startRadius: 0,
+			endRadius: Math.PI * 2,
+			color: 0x000000
+		};
 
-		var radius = Math.min(height/2 - 20, width/2 - 20);
-		var segments = 128;
-		var startRadius = 0;
-		var endRadius = Math.PI * 2;
-
-		var circleGeometry = new THREE.CircleGeometry(radius, segments, startRadius, endRadius);				
-		var circle = new THREE.Mesh( circleGeometry, material );
-		// circle.position.z = 0;
+		var circle = createCircle(params);
 		sceneOrtho.add( circle );
 		
-		// children
-		var material = new THREE.MeshBasicMaterial({
-			color: 0xffffff
-		});
+		params.color = 0xffffff;
+		params.radius = params.radius - 20;
+		var childCircle = createCircle(params);
 
-		var circleGeometry = new THREE.CircleGeometry(radius - 20, segments, startRadius, endRadius);
-		var childCircle = new THREE.Mesh(circleGeometry, material );
-		// childCircle.position.x = 3;
 		circle.add(childCircle);
 
 		circles.push(circle);
 		circles.push(childCircle);
 
-		// new TWEEN.Tween({radius: startRadius})
-		// 	.to({radius: endRadius})
-		// 	.easing(THREE.Easing.Linear.NONE)
-		// 	.onUpdate(function() {
-		// 		var circle;
-		// 		for (var i = 0; i < circles.length; i++) {
-		// 			circle = circles[i];
-		// 			sceneOrtho.remove(circle);
-		// 		};
-		// 		circles = [];
-				
-		// 	})
-		// 	.start();
+
+		new TWEEN.Tween({radius: params.startRadius})
+			.to({radius: params.endRadius}, 2000)
+			// .easing(TWEEN.Easing.Exponential.In)
+			.easing(TWEEN.Easing.Linear.None)
+			.onUpdate(function() {
+				var circle;
+				for (var i = 0; i < circles.length; i++) {
+					circle = circles[i];
+					sceneOrtho.remove(circle);
+				};
+				circles = [];
+				params.color = 0x000000;
+				params.radius = params.radius + 20;
+				params.endRadius = this.radius;
+				var circle = createCircle(params);
+				sceneOrtho.add(circle);
+				params.color = 0xffffff;
+				params.radius = params.radius - 20;
+				var childCircle = createCircle(params);
+				circle.add(childCircle);
+			})
+			.start();
 
 	}
 
