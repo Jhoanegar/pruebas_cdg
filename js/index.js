@@ -264,30 +264,39 @@ var BOUNCE = "bounce";
 	}
 
 
-	function addPerfumes(newCircle) {
+	function addPerfumes(circle) {
 		var perfumeWidth = 37;
 		var perfumeHeight = 70;
-		var numberOfPerfumes = [0,0,0,0,0,5];
+		var numberOfPerfumes = [0,0,0,0,5,1];
 		var margin = 5;
 		var separation = 10;
+		var marginX;
+		var marginY;
+		var originX; 
+		var originY; 
+		var directionX;
+		var directionY;
+		var perfumes = numberOfPerfumes[circle.perfumeInfo.id];
+		var rectShape = new THREE.Shape();
+		var rectWidth;
+		var rectHeight;
 
-		var perfumes = numberOfPerfumes[newCircle.perfumeInfo.id];
-
-		if (perfumes == 0)
+		if (perfumes == 0 || circle.perfumeInfo.id != 5)
 			return;
 
-		switch(newCircle.perfumeInfo.id) {
+		switch(circle.perfumeInfo.id) {
 
 		case 5:
-			var marginX = 20;
-			var marginY = 20;
-			var rectWidth = (perfumeWidth * perfumes) + ((perfumes - 1) * separation) + (marginX * 2);
-			var rectHeight = perfumeHeight + marginY * 2;
-			var rectShape = new THREE.Shape();
-			var differenceX = newCircle.position.x + rectWidth - width * 0.5;
-			var differenceY = newCircle.position.y + rectHeight - height * 0.5;
-			var originX = marginX;
-			var originY = -marginY;
+			marginX = 20;
+			marginY = 20;
+			directionX = 1;
+			directionY = -1;
+			rectWidth = (perfumeWidth * perfumes) + ((perfumes - 1) * separation) + (marginX * 2);
+			rectHeight = perfumeHeight + marginY * 2;
+			var differenceX = circle.position.x + rectWidth - width * 0.5;
+			var differenceY = circle.position.y + rectHeight - height * 0.5;
+			originX = marginX;
+			originY = -marginY;
 			if ( differenceX > 0 ) {
 				console.error("Out of bounds for " + (differenceX) + " in x");
 				originX = -differenceX;
@@ -296,24 +305,38 @@ var BOUNCE = "bounce";
 			if ( differenceY > 0) {
 				console.error("Out of bounds for " + (differenceY) + " in y");
 			}
+			rectWidth *= directionX;
+			rectHeight *= directionY;
 			// From top-left to bottom-right
 			rectShape.moveTo( originX, originY );
 			rectShape.lineTo( rectWidth, originY );
-			rectShape.lineTo( rectWidth, -rectHeight );
-			rectShape.lineTo( originX, -rectHeight );
+			rectShape.lineTo( rectWidth, rectHeight );
+			rectShape.lineTo( originX, rectHeight );
 			rectShape.lineTo( originX, originY );
-			// rectShape.lineTo( originX, rectHeight );
-			// rectShape.lineTo( rectWidth, rectHeight );
-			// rectShape.lineTo( rectWidth, originY );
-			// rectShape.lineTo( originX, originY );
 
 			var rectGeom = new THREE.ShapeGeometry( rectShape );
 			var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0x00aeff } ) ) ;	
-			newCircle.add( rectMesh );
+			circle.add( rectMesh );
 			console.log(rectMesh.material)
 			rectMesh.scale.set(0.01,0.01,0.01);
 			break;
 		}
+
+		var innerRect;
+		for (var i = 0; i < perfumes; i++) {
+			innerRect = circle.children[0];
+			debugger;
+			var perfumeImg = new THREE.Shape();
+			perfumeImg.moveTo( originX, originY );
+			rectShape.lineTo( perfumeWidth * direction, originY );
+			rectShape.lineTo( perfumeWidth * direction, perfumeHeight * direction );
+			rectShape.lineTo( originX, perfumeHeight * direction );
+			rectShape.lineTo( originX, originY );
+			var geometry = new THREE.ShapeGeometry( rectShape );
+			var perfumeTexture = new THREE.ImageUtils.loadTexture( 'img/' + circle.perfumeInfo.id + '_' + i + '.png' );
+			var rectMesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: perfumeTexture } ) ) ;	
+			innerRect.add(rectMesh);
+		};
 		
 	}
 
