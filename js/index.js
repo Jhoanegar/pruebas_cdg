@@ -17,7 +17,6 @@ var BOUNCE = "bounce";
 	var mouseVector = new THREE.Vector3();
 	var raycaster = new THREE.Raycaster();
 
-
 	document.body.style.margin = "0"
 	document.body.style.overflow = "hidden"
 	var sceneOrtho = new THREE.Scene();
@@ -150,13 +149,9 @@ var BOUNCE = "bounce";
 		    raycaster.set( mouseVector, dir );
 		    var intersects = raycaster.intersectObjects( menuCircles );
 		    if (intersects.length > 0) {
-		    	console.log(intersects);
+		    	console.log(intersects[0].object.perfumeId);
 		    }
 		}
-
-		// console.log(event)
-		// asdfsadf;
-
 	}
 
 	var circles = [];
@@ -211,12 +206,16 @@ var BOUNCE = "bounce";
 			newCircle.position.y = coords.y;
 			newCircle.scale.set(0.01,0.01,0.01);
 			newCircle.hasHover = false;
+			newCircle.perfumeInfo = {};
+			newCircle.perfumeInfo.id = i;
+			newCircle.perfumeInfo.radius = params.radius;
+			newCircle.parent = circle;
+			addPerfumes(newCircle);
 			menuCircles.push(newCircle);
 			circle.add(newCircle);
 		}
 
 		var scale = ( (origRadius - border/ 5) ) / (origRadius - border);
-		console.log(scale);
 
 		var showCircles = new TWEEN.Tween({scale: 0.01})
 			.to({scale: 1}, 2000)
@@ -260,6 +259,52 @@ var BOUNCE = "bounce";
 
 		showCircles.start();
 		
+		
+	}
+
+
+	function addPerfumes(newCircle) {
+		var perfumeWidth = 37;
+		var perfumeHeight = 70;
+		var numberOfPerfumes = [0,0,0,0,0,5];
+		var margin = 5;
+		var separation = 10;
+
+		var perfumes = numberOfPerfumes[newCircle.perfumeInfo.id];
+
+		if (perfumes == 0)
+			return;
+
+		switch(newCircle.perfumeInfo.id) {
+
+		case 5:
+			var rectWidth = (perfumeWidth * perfumes) + ((perfumes - 1) * separation) + (margin * 2);
+			var rectHeight = perfumeHeight + margin * 2;
+			var rectShape = new THREE.Shape();
+			var differenceX = newCircle.position.x + rectWidth - width * 0.5;
+			var differenceY = newCircle.position.y + rectHeight - height * 0.5;
+			var originX = 0;
+			var originY = 0;
+			if ( differenceX > 0 ) {
+				console.error("Out of bounds for " + (differenceX) + " in x");
+				
+			}
+			if ( differenceY > 0) {
+				console.error("Out of bounds for y" + (differenceX) + " in y");
+			}
+			rectShape.moveTo( originX, originY );
+			rectShape.lineTo( originX, rectHeight );
+			rectShape.lineTo( rectWidth, rectHeight );
+			rectShape.lineTo( rectWidth, originY );
+			rectShape.lineTo( originX, originY );
+
+			var rectGeom = new THREE.ShapeGeometry( rectShape );
+			var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0x00aeff } ) ) ;		
+			// rectMesh.position.x += newCircle.position.x
+			// rectMesh.position.y += newCircle.position.y
+			newCircle.add( rectMesh );
+			break;
+		}
 		
 	}
 
