@@ -134,6 +134,8 @@ var BOUNCE = "bounce";
 	function onDocumentMouseMove( event ) {
 		mouseX = event.clientX;
 		mouseY = event.clientY;
+		console.log(event)
+		asdfsadf;
 
 	}
 
@@ -145,11 +147,11 @@ var BOUNCE = "bounce";
 	}
 
 	function showMenu() {
-		var border = 60;
+		var border = 40;
 		var material = new THREE.MeshBasicMaterial({
 			color: 0x000
 		});
-		var origRadius = Math.min(height/2 - 20, width/2 - 20);
+		var origRadius = Math.min(height/2 - 50, width/2 - 50);
 
 		
 		var params = {
@@ -165,7 +167,9 @@ var BOUNCE = "bounce";
 		sceneOrtho.add( circle );
 		
 		params.color = 0xffffff;
-		params.radius = params.radius - border;
+		console.log(origRadius);
+		var innerCircleRadius = params.radius - border;
+		params.radius = innerCircleRadius;
 		var childCircle = createCircle(params);
 		childCircle.scale.set(0.1,0.1,0.1);
 		circle.add(childCircle);
@@ -173,9 +177,27 @@ var BOUNCE = "bounce";
 		circles.push(circle);
 		circles.push(childCircle);
 
+		var menuCircles = [];
+		var factor = 0.03;
+		params.radius = origRadius * factor;
+		params.color = 0x000000;
+		var degrees = [0, 45, 135, 180, 225, 315];
+		var newCircle;
+		for (var i = 0; i < 6; i++) {
+			newCircle = createCircle(params);
+			newCircle.position.y = origRadius * (1 - factor + factor/2 ) ;
+			coords = rotateCoords(newCircle.position.x, newCircle.position.y, degrees[i]);
+			newCircle.position.x = coords.x;
+			newCircle.position.y = coords.y;
+			newCircle.scale.set(0.01,0.01,0.01);
+			menuCircles.push(newCircle);
+			circle.add(newCircle);
+		}
 
+		var scale = ( (origRadius - border/ 5) ) / (origRadius - border);
+		console.log(scale);
 
-		var showCircles = new TWEEN.Tween({scale: 0})
+		var showCircles = new TWEEN.Tween({scale: 0.01})
 			.to({scale: 1}, 2000)
 			.easing(TWEEN.Easing.Exponential.InOut)
 			.onUpdate(function() {
@@ -189,11 +211,22 @@ var BOUNCE = "bounce";
 			});
 
 		var resizeInnerCircle = new TWEEN.Tween({scale: 1})
-			.to({scale: 1.27}, 2000)
+			.to({scale: scale}, 2000)
 			.easing(TWEEN.Easing.Exponential.InOut)
 			.onUpdate(function() {
 				var scale = this.scale;
 				childCircle.scale.set(scale,scale,scale);
+			})
+			.onComplete(function() {
+				new TWEEN.Tween({scale: 0.01})
+					.to({scale: 1}, 1000)
+					.easing(TWEEN.Easing.Exponential.InOut)
+					.onUpdate(function() {
+						var scale = this.scale;
+						for (var i = 0; i < menuCircles.length; i++) {
+							menuCircles[i].scale.set(scale,scale,scale);
+						}
+					}).start();
 			});
 
 		var changeColor = new TWEEN.Tween({color: 0})
@@ -205,16 +238,7 @@ var BOUNCE = "bounce";
 
 
 		showCircles.start();
-		menuCircles = [];
-		params.radius = origRadius * .070;
-		params.color = 0x00aeff
-		var new_circle;
-		// for (var i = 0; i < 6; i++) {
-			// new_circle = createCircle(params);
-			// new_circle.position.y = origRadius * 0.970;
-			// menuCircles.push(new_circle);
-			// circle.add(new_circle);
-		// };
+		
 		
 	}
 

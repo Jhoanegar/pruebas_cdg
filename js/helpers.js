@@ -20,3 +20,10 @@ function createCircle(params) {
 	var circleGeometry = new THREE.CircleGeometry(params.radius, params.segments, params.startRadius, params.endRadius);				
 	return new THREE.Mesh( circleGeometry, material );
 }
+
+function rotateCoords(x, y, deg) {
+	var theta = (deg * Math.PI) / 180;
+	var x_1 = Math.cos(theta) * x + (-Math.sin(theta) * y);
+	var y_1 = Math.sin(theta) * x + Math.cos(theta) * y;
+	return {x: x_1, y: y_1};
+}
