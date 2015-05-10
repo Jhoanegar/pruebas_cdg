@@ -279,13 +279,15 @@ var BOUNCE = "bounce";
 		switch(newCircle.perfumeInfo.id) {
 
 		case 5:
-			var rectWidth = (perfumeWidth * perfumes) + ((perfumes - 1) * separation) + (margin * 2);
-			var rectHeight = perfumeHeight + margin * 2;
+			var marginX = 20;
+			var marginY = 20;
+			var rectWidth = (perfumeWidth * perfumes) + ((perfumes - 1) * separation) + (marginX * 2);
+			var rectHeight = perfumeHeight + marginY * 2;
 			var rectShape = new THREE.Shape();
 			var differenceX = newCircle.position.x + rectWidth - width * 0.5;
 			var differenceY = newCircle.position.y + rectHeight - height * 0.5;
-			var originX = 0;
-			var originY = 0;
+			var originX = marginX;
+			var originY = -marginY;
 			if ( differenceX > 0 ) {
 				console.error("Out of bounds for " + (differenceX) + " in x");
 				originX = -differenceX;
@@ -296,10 +298,14 @@ var BOUNCE = "bounce";
 			}
 			// From top-left to bottom-right
 			rectShape.moveTo( originX, originY );
-			rectShape.lineTo( originX, rectHeight );
-			rectShape.lineTo( rectWidth, rectHeight );
 			rectShape.lineTo( rectWidth, originY );
+			rectShape.lineTo( rectWidth, -rectHeight );
+			rectShape.lineTo( originX, -rectHeight );
 			rectShape.lineTo( originX, originY );
+			// rectShape.lineTo( originX, rectHeight );
+			// rectShape.lineTo( rectWidth, rectHeight );
+			// rectShape.lineTo( rectWidth, originY );
+			// rectShape.lineTo( originX, originY );
 
 			var rectGeom = new THREE.ShapeGeometry( rectShape );
 			var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0x00aeff } ) ) ;	
