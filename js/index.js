@@ -12,6 +12,11 @@ var BOUNCE = "bounce";
 	var height = window.innerHeight;
 	var mouseX=-1000000,mouseY=-100000;
 	var totalParticles=500;
+	// var projector = new THREE.Projector();
+	var dir = new THREE.Vector3();
+	var mouseVector = new THREE.Vector3();
+	var raycaster = new THREE.Raycaster();
+
 
 	document.body.style.margin = "0"
 	document.body.style.overflow = "hidden"
@@ -136,6 +141,19 @@ var BOUNCE = "bounce";
 	function onDocumentMouseMove( event ) {
 		mouseX = event.clientX;
 		mouseY = event.clientY;
+
+		// Detects if one of the menu circles is being hovered
+		if (bottleFormed) {
+			mouseVector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, - 1 ); // z = - 1 important!
+		    mouseVector.unproject( cameraOrtho );
+		    dir.set( 0, 0, - 1 ).transformDirection( cameraOrtho.matrixWorld );
+		    raycaster.set( mouseVector, dir );
+		    var intersects = raycaster.intersectObjects( menuCircles );
+		    if (intersects.length > 0) {
+		    	console.log(intersects);
+		    }
+		}
+
 		// console.log(event)
 		// asdfsadf;
 
@@ -144,10 +162,11 @@ var BOUNCE = "bounce";
 	var circles = [];
 	function onBottleFormed() {
 		console.log("BottleFormed");
-		window.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+		// window.removeEventListener( 'mousemove', onDocumentMouseMove, false );
 		showMenu();
 	}
 
+	var menuCircles = [];
 	function showMenu() {
 		var border = 40;
 		var material = new THREE.MeshBasicMaterial({
@@ -179,7 +198,6 @@ var BOUNCE = "bounce";
 		circles.push(circle);
 		circles.push(childCircle);
 
-		var menuCircles = [];
 		var factor = 0.03;
 		params.radius = origRadius * factor;
 		params.color = 0x000000;
@@ -192,6 +210,7 @@ var BOUNCE = "bounce";
 			newCircle.position.x = coords.x;
 			newCircle.position.y = coords.y;
 			newCircle.scale.set(0.01,0.01,0.01);
+			newCircle.hasHover = false;
 			menuCircles.push(newCircle);
 			circle.add(newCircle);
 		}
