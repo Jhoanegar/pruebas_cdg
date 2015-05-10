@@ -139,19 +139,21 @@ var BOUNCE = "bounce";
 
 	var circles = [];
 	function onBottleFormed() {
-		// myFrame = frame
 		console.log("BottleFormed")
-		// console.log(frame.children[0].position);
-		// console.log(pointsShapeBottle[0].position);
 		window.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+		showMenu();
+	}
 
+	function showMenu() {
+		var border = 60;
 		var material = new THREE.MeshBasicMaterial({
 			color: 0x000
 		});
+		var origRadius = Math.min(height/2 - 20, width/2 - 20);
 
 		
 		var params = {
-			radius: Math.min(height/2 - 20, width/2 - 20),
+			radius: origRadius,
 			segments: 128,
 			startRadius: 0,
 			endRadius: Math.PI * 2,
@@ -159,41 +161,61 @@ var BOUNCE = "bounce";
 		};
 
 		var circle = createCircle(params);
+		circle.scale.set(0.1,0.1,0.1);
 		sceneOrtho.add( circle );
 		
 		params.color = 0xffffff;
-		params.radius = params.radius - 20;
+		params.radius = params.radius - border;
 		var childCircle = createCircle(params);
-
+		childCircle.scale.set(0.1,0.1,0.1);
 		circle.add(childCircle);
 
 		circles.push(circle);
 		circles.push(childCircle);
 
 
-		new TWEEN.Tween({radius: params.startRadius})
-			.to({radius: params.endRadius}, 2000)
-			// .easing(TWEEN.Easing.Exponential.In)
-			.easing(TWEEN.Easing.Linear.None)
-			.onUpdate(function() {
-				var circle;
-				for (var i = 0; i < circles.length; i++) {
-					circle = circles[i];
-					sceneOrtho.remove(circle);
-				};
-				circles = [];
-				params.color = 0x000000;
-				params.radius = params.radius + 20;
-				params.endRadius = this.radius;
-				var circle = createCircle(params);
-				sceneOrtho.add(circle);
-				params.color = 0xffffff;
-				params.radius = params.radius - 20;
-				var childCircle = createCircle(params);
-				circle.add(childCircle);
-			})
-			.start();
 
+		var showCircles = new TWEEN.Tween({scale: 0})
+			.to({scale: 1}, 2000)
+			.easing(TWEEN.Easing.Exponential.InOut)
+			.onUpdate(function() {
+				var scale = this.scale;
+				childCircle.scale.set(scale,scale,scale);
+				circle.scale.set(scale,scale,scale);
+			})
+			.onComplete(function() {
+				resizeInnerCircle.start();
+				changeColor.start()
+			});
+
+		var resizeInnerCircle = new TWEEN.Tween({scale: 1})
+			.to({scale: 1.27}, 2000)
+			.easing(TWEEN.Easing.Exponential.InOut)
+			.onUpdate(function() {
+				var scale = this.scale;
+				childCircle.scale.set(scale,scale,scale);
+			});
+
+		var changeColor = new TWEEN.Tween({color: 0})
+			.to({color: .752}, 2000)
+			.easing(TWEEN.Easing.Exponential.InOut)
+			.onUpdate(function() {
+				circle.material.color = new THREE.Color(this.color, this.color, this.color);
+			});
+
+
+		showCircles.start();
+		menuCircles = [];
+		params.radius = origRadius * .070;
+		params.color = 0x00aeff
+		var new_circle;
+		// for (var i = 0; i < 6; i++) {
+			// new_circle = createCircle(params);
+			// new_circle.position.y = origRadius * 0.970;
+			// menuCircles.push(new_circle);
+			// circle.add(new_circle);
+		// };
+		
 	}
 
 	document.body.appendChild( renderer.domElement )
