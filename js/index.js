@@ -149,7 +149,8 @@ var BOUNCE = "bounce";
 		    raycaster.set( mouseVector, dir );
 		    var intersects = raycaster.intersectObjects( menuCircles );
 		    if (intersects.length > 0) {
-		    	console.log(intersects[0].object.perfumeId);
+		    	// console.log(intersects[0].object.perfumeId);
+		    	showPerfumes(intersects[0].object);
 		    }
 		}
 	}
@@ -287,11 +288,13 @@ var BOUNCE = "bounce";
 			var originY = 0;
 			if ( differenceX > 0 ) {
 				console.error("Out of bounds for " + (differenceX) + " in x");
+				originX = -differenceX;
 				
 			}
 			if ( differenceY > 0) {
-				console.error("Out of bounds for y" + (differenceX) + " in y");
+				console.error("Out of bounds for " + (differenceY) + " in y");
 			}
+			// From top-left to bottom-right
 			rectShape.moveTo( originX, originY );
 			rectShape.lineTo( originX, rectHeight );
 			rectShape.lineTo( rectWidth, rectHeight );
@@ -299,13 +302,29 @@ var BOUNCE = "bounce";
 			rectShape.lineTo( originX, originY );
 
 			var rectGeom = new THREE.ShapeGeometry( rectShape );
-			var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0x00aeff } ) ) ;		
-			// rectMesh.position.x += newCircle.position.x
-			// rectMesh.position.y += newCircle.position.y
+			var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0x00aeff } ) ) ;	
 			newCircle.add( rectMesh );
+			console.log(rectMesh.material)
+			rectMesh.scale.set(0.01,0.01,0.01);
 			break;
 		}
 		
+	}
+
+	function showPerfumes(object) {
+		var circle = object.children[0];
+		if (!circle || circle.hasHover == true)
+			return;
+		circle.hasHover = true;
+
+		new TWEEN.Tween({scale: 0.01})
+			.to({scale: 1}, 1000)
+			.easing(TWEEN.Easing.Exponential.InOut)
+			.onUpdate(function() {
+				var scale = this.scale;
+				circle.scale.set(scale, scale, scale);
+			}).start();
+
 	}
 
 	document.body.appendChild( renderer.domElement )
