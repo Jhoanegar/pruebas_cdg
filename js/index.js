@@ -81,13 +81,15 @@ var BOUNCE = "bounce";
 	var ballSprite;
 	var spritesAttracted = 0;
 	var bottleFormed = false
+	var attractionLength = Math.min(width * .4, height * .4);
+	console.log("attracted", attractionLength);
 	function update() {
 		for ( var i = 0; i < frame.children.length; i++ ) {
 			ballSprite = frame.children[i];
 			if ( !ballSprite.attracted){
 				dummy.subVectors( mouseVector.set( mouseX, mouseY, 1 ), ballSprite.position );
 
-			 if(dummy.length() > 200 ) 	continue;
+			 if(dummy.length() >  attractionLength) 	continue;
 			}
 
 			if (!ballSprite.attracted) {
@@ -134,14 +136,14 @@ var BOUNCE = "bounce";
 	function onDocumentMouseMove( event ) {
 		mouseX = event.clientX;
 		mouseY = event.clientY;
-		console.log(event)
-		asdfsadf;
+		// console.log(event)
+		// asdfsadf;
 
 	}
 
 	var circles = [];
 	function onBottleFormed() {
-		console.log("BottleFormed")
+		console.log("BottleFormed");
 		window.removeEventListener( 'mousemove', onDocumentMouseMove, false );
 		showMenu();
 	}
