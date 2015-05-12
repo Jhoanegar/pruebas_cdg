@@ -48,7 +48,8 @@ window.addEventListener( 'mousemove', onDocumentMouseMove, false );
 onWindowResize();
 
 function animate() {
-	raf( animate );
+	// raf( animate );
+	// requestAnimationFrame(animate);
 	update();
 	render();
 }
@@ -96,4 +97,5 @@ function onBottleFormed() {
 }
 
 document.body.appendChild( renderer.domElement )
-animate();
+// animate();
+render();
