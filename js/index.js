@@ -325,12 +325,11 @@ var BOUNCE = "bounce";
 		var innerRect;
 		for (var i = 0; i < perfumes; i++) {
 			innerRect = circle.children[0];
-			debugger;
 			var perfumeImg = new THREE.Shape();
 			perfumeImg.moveTo( originX, originY );
-			rectShape.lineTo( perfumeWidth * direction, originY );
-			rectShape.lineTo( perfumeWidth * direction, perfumeHeight * direction );
-			rectShape.lineTo( originX, perfumeHeight * direction );
+			rectShape.lineTo( perfumeWidth * directionX, originY );
+			rectShape.lineTo( perfumeWidth * directionX, perfumeHeight * directionY );
+			rectShape.lineTo( originX, perfumeHeight * directionY );
 			rectShape.lineTo( originX, originY );
 			var geometry = new THREE.ShapeGeometry( rectShape );
 			var perfumeTexture = new THREE.ImageUtils.loadTexture( 'img/' + circle.perfumeInfo.id + '_' + i + '.png' );
