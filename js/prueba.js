@@ -22,6 +22,23 @@ renderer.setClearColor( 0xffffff )
 renderer.setSize( width, height )
 var cameraOrtho = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10 );
 cameraOrtho.position.z = 10;
+var material = new THREE.MeshBasicMaterial({
+	color: 0x0000ff
+});
+
+var radius = 100;
+var segments = 32;
+
+var circleGeometry = new THREE.CircleGeometry( radius, segments );				
+var circle = new THREE.Mesh( circleGeometry, material );
+		sceneOrtho.add( circle );
+
+var geometry = new THREE.BoxGeometry( 10, 10, 10 );
+var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+cube.position.z = 1
+	sceneOrtho.add( cube );
+
 
 
 window.addEventListener( 'resize', onWindowResize, false );
